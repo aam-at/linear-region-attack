@@ -39,7 +39,7 @@ def main():
     # get logger
     logger = logging.getLogger()
     [logger.removeHandler(handler) for handler in logger.handlers]
-    Path(args.working_dir).mkdir()
+    Path(args.working_dir).mkdir(parents=True)
     file_hndl = FileHandler(os.path.join(args.working_dir, 'attack.log'))
     file_hndl.setLevel(logging.DEBUG)
     logger.addHandler(file_hndl)
