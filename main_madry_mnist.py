@@ -3,10 +3,14 @@ import argparse
 import logging
 import os
 import pickle
+from logging import FileHandler, Formatter, StreamHandler
+from pathlib import Path
 
 from lr_attack import run
 from mnist_data import load_mnist
-from mnist_examples import get_example
+from mnist_examples import get_madry_example
+from examples import find_starting_point
+from functools import partial
 
 
 def main():
@@ -35,7 +39,8 @@ def main():
     # get logger
     logger = logging.getLogger()
     [logger.removeHandler(handler) for handler in logger.handlers]
-    file_hndl = FileHandler(os.path.join(FLAGS.working_dir, 'tensorflow.log'))
+    Path(args.working_dir).mkdir()
+    file_hndl = FileHandler(os.path.join(args.working_dir, 'attack.log'))
     file_hndl.setLevel(logging.DEBUG)
     logger.addHandler(file_hndl)
     cmd_hndl = StreamHandler()
@@ -46,13 +51,22 @@ def main():
 
     if args.save is not None:
         if os.path.exists(args.save):
-            logging.warning(f'not runnning because results already exist: {args.save}')
+            logging.warning(
+                f'not runnning because results already exist: {args.save}')
             return
 
-    n_classes, predict, params = get_example(args.model)
+    n_classes, predict, params = get_madry_example(args.model)
     _, _, test_ds = load_mnist()
     test_images, test_labels = test_ds
-    result = run(n_classes, predict, params, test_images, test_labels, args=args)
+    find_starting_point_2 = partial(find_starting_point, test_images,
+                                    test_labels)
+    result = run(n_classes,
+                 predict,
+                 params,
+                 test_images,
+                 test_labels,
+                 find_starting_point_2,
+                 args=args)
 
     if args.save is not None:
         directory = os.path.dirname(args.save)

@@ -6,6 +6,7 @@ from functools import partial
 
 import jax
 import numpy as onp
+import scipy.io
 
 from examples import (find_starting_point,
                       find_starting_point_likely_class_strategy,
@@ -56,7 +57,3 @@ def get_madry_example(name):
     params = load_madry_params(weights[name])
     n_classes = output_shape[-1]
     return n_classes, predict, params
-
-
-def get_example(name):
-    return get_madry_example(weights[name])
