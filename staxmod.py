@@ -2,7 +2,7 @@
 activations, in particular the inputs to non-affine layers."""
 from jax.experimental.stax import (AvgPool, BatchNorm, Conv, Dense, FanInSum,
                                    FanOut, Flatten, GeneralConv, Identity,
-                                   Relu)
+                                   Relu, MaxPool)
 from jax import random
 import jax.numpy as np
 from jax.experimental import stax
@@ -84,6 +84,7 @@ def parallel(*layers):
 
 
 AvgPool = affine(AvgPool)
+MaxPool = affine(MaxPool)
 BatchNorm = affine(BatchNorm)
 Conv = affine(Conv)
 Dense = affine(Dense)
